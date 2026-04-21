@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madrasa Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="text-align: left;">
+                <h1 id="displayMadrasaName" style="margin: 0; color: #1b5e20;">Loading...</h1>
+                <p style="margin: 0; color: #555;">Madrasa ID: <span id="displayMadrasaId"></span></p>
+            </div>
+            <button id="logoutBtn" class="btn-danger" style="margin: 0;">Logout</button>
+        </header>
+
+        <div class="form-section no-print">
+            <h2>⚙️ Settings (Update Madrasa Info)</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="newMadrasaName" placeholder="Update Madrasa Name">
+                <button id="updateNameBtn" class="btn-info">Update Name</button>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="newClassName" placeholder="Add New Class/Division (e.g., Class 1A)">
+                <button id="addClassBtn" class="btn-info">Add Class</button>
+            </div>
+        </div>
+
+        <div class="form-section no-print">
+            <h2>🎓 Add Student Data</h2>
+            <form id="studentForm">
+                <input type="text" id="studentName" placeholder="Student Name" required>
+                <select id="studentClass" required>
+                    <option value="" disabled selected>Select Class</option>
+                </select>
+                <input type="tel" id="studentContact" placeholder="Contact Number" required>
+                <input type="tel" id="studentWhatsapp" placeholder="WhatsApp Number" required>
+                <button type="submit">Submit Student Details</button>
+            </form>
+        </div>
+
+        <div class="form-section no-print" style="background: #e3f2fd;">
+            <h2>👳‍♂️ Add Ustad (Teacher)</h2>
+            <form id="ustadForm">
+                <input type="text" id="ustadName" placeholder="Ustad Name" required>
+                <select id="ustadClass" required>
+                    <option value="" disabled selected>Assign Class</option>
+                </select>
+                <input type="tel" id="ustadContact" placeholder="Contact Number" required>
+                <input type="tel" id="ustadWhatsapp" placeholder="WhatsApp Number" required>
+                <button type="submit" style="background: #1976d2;">Submit Ustad Details</button>
+            </form>
+        </div>
+
+        <div class="actions no-print">
+            <div class="filter-box" style="display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+                <select id="filterClass" style="width: auto; padding: 8px;">
+                    <option value="all">All Classes</option>
+                </select>
+                <button id="loadStudentsBtn" class="btn-secondary">View Students</button>
+                <button id="pdfStudentsBtn" class="btn-warning">Download PDF</button>
+                <button id="deleteAllStudentsBtn" class="btn-danger" style="background-color: #d32f2f;">Delete All Students</button>
+            </div>
+            
+            <div class="filter-box" style="display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap;">
+                <button id="loadUstadsBtn" class="btn-secondary">View Ustads List</button>
+                <button id="pdfUstadsBtn" class="btn-warning">Download Ustads PDF</button>
+                <button id="deleteAllUstadsBtn" class="btn-danger" style="background-color: #d32f2f;">Delete All Ustads</button>
+            </div>
+        </div>
+
+        <div id="printArea" class="data-section">
+            <div id="pdfHeader" style="text-align: center; display: none; border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
+                <h1 id="pdfMadrasaName" style="margin: 0; font-size: 24px; color: #1b5e20;"></h1>
+                <h3 id="pdfClassName" style="margin: 5px 0; color: #555;"></h3>
+            </div>
+            <div id="recordsTable">
+                <p style="text-align: center; color: #666;">Click "View" buttons to load data.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

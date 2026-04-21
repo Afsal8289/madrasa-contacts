@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="madrasaHeading">Student Registration</h1>
+            <p id="subText">Enter Madrasa ID to start</p>
+        </header>
+
+        <form id="publicForm">
+            <input type="text" id="mId" placeholder="ENTER MADRASA ID (e.g. FRM01)" 
+                   oninput="this.value = this.value.toUpperCase()" required>
+            <button type="button" id="checkIdBtn" style="background:#2196f3; margin-bottom:10px;">Check ID</button>
+            
+            <hr>
+            
+            <div id="registrationFields" style="display: none; flex-direction: column; gap: 15px; margin-top: 15px;">
+                <input type="text" id="sName" placeholder="Student Name" required>
+                
+                <select id="sClass" required>
+                    <option value="" disabled selected>Select Your Class</option>
+                </select>
+
+                <input type="tel" id="sContact" placeholder="Contact Number" required>
+                <input type="tel" id="sWhatsapp" placeholder="WhatsApp Number" required>
+                <button type="submit">Submit Details</button>
+            </div>
+        </form>
+        <p id="msg" style="text-align:center; color:green; margin-top:10px; font-weight:bold;"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyC0ShWac2iBgbPswit4YAm2z4XvJrRd0bY",
+    authDomain: "madrasa-contacts.firebaseapp.com",
+    projectId: "madrasa-contacts",
+    storageBucket: "madrasa-contacts.firebasestorage.app",
+    messagingSenderId: "69984825841",
+    appId: "1:69984825841:web:23dfec09e4a16bd6af5450"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('checkIdBtn').addEventListener('click', async () => {
+            const mId = document.getElementById('mId').value;
+            const heading = document.getElementById('madrasaHeading');
+            const fields = document.getElementById('registrationFields');
+            const classDropdown = document.getElementById('sClass');
+
+            if(!mId) return alert("Please enter Madrasa ID");
+
+            const docRef = doc(db, "madrasas", mId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                
+                heading.innerText = data.name; 
+                document.getElementById('subText').innerText = "Student Registration Form"; 
+
+                // ക്ലാസുകൾ ഇവിടെയും ഓർഡർ പ്രകാരം ആക്കുന്നു
+                let classes = data.classes || [];
+                classes.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
+
+                classDropdown.innerHTML = '<option value="" disabled selected>Select Your Class</option>';
+                if(classes.length > 0) {
+                    classes.forEach(cls => {
+                        classDropdown.innerHTML += `<option value="${cls}">${cls}</option>`;
+                    });
+                }
+                fields.style.display = 'flex'; 
+            } else {
+                alert("Invalid Madrasa ID! Please check again.");
+            }
+        });
+
+        document.getElementById('publicForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "Submitting...";
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, "students"), {
+                    madrasaId: document.getElementById('mId').value,
+                    name: document.getElementById('sName').value,
+                    class: document.getElementById('sClass').value,
+                    contact: document.getElementById('sContact').value,
+                    whatsapp: document.getElementById('sWhatsapp').value,
+                    timestamp: new Date()
+                });
+                document.getElementById('msg').innerText = "Registration Successful!";
+                document.getElementById('publicForm').reset();
+                document.getElementById('registrationFields').style.display = 'none';
+                document.getElementById('madrasaHeading').innerText = "Student Registration";
+                document.getElementById('subText').innerText = "Enter Madrasa ID to start";
+            } catch (err) { 
+                alert("Error! Please try again.");
+            } finally {
+                btn.innerText = "Submit Details";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
